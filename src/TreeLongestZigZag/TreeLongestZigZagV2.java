@@ -2,7 +2,7 @@ package TreeLongestZigZag;
 
 import java.util.ArrayList;
 
-public class TreeLongestZigZagV1 {
+public class TreeLongestZigZagV2 {
     /*
     In this problem we consider binary trees. Let's define a turn on a path as a change in the direction of
     the path (i.e. a switch from right to left or vice versa). A zigzag is simply a sequence of turns
@@ -55,6 +55,7 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
      */
 
 
+
     static class Tree {
         public int x;
         public Tree l;
@@ -71,30 +72,48 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
         return temp;
     }
 
+    static class Node {
+        Tree node;
+        int zigzagSayisi;
+        int lgth;
+    }
+
+    public static void zigzagSayisiBul(Tree root, int zigzagSayisi, int legth, int yon, Node node) { // 1 sag icin 0 sol icin
+
+        System.out.print("(" + root.x + ",");
+        if (root.l != null) {
+            zigzagSayisiBul(root.l, yon == 1 ? zigzagSayisi+1 : zigzagSayisi, legth + 1, 0, node);
+        } else
+            System.out.print("None,");
+
+        if (root.r != null) {
+            zigzagSayisiBul(root.r, yon == 0 ? zigzagSayisi+1 : zigzagSayisi, legth + 1, 1, node);
+        }else
+            System.out.print("None");
+        System.out.print(")");
+        if (root.r == null && root.l == null) {
+//            if (node.lgth < legth || (node.lgth == legth && node.zigzagSayisi < zigzagSayisi)) {
+            if (node.zigzagSayisi < zigzagSayisi) {
+                node.node = root;
+                node.zigzagSayisi = zigzagSayisi;
+                node.lgth = legth;
+            }
+        }
+    }
+
     public static int solution(Tree T) {
         // write your code in Java SE 8
 
-        ArrayList<Tree> output = longestPath(T);
-        int n = output.size();
+//        ArrayList<Tree> output = longestPath(T);
+//        int n = output.size();
 
-//        System.out.println("");
-//        System.out.print(output.get(n - 1).x);
-//        for(int i = n - 2; i >= 0; i--)
-//        {
-//            System.out.print(" -> " + output.get(i).x);
-//        }
-//        System.out.println();
-        int count = getCount(output);
+//        int count = getCount(output);
 
-        return count;
+        Node node = new Node();
+        zigzagSayisiBul(T, 0, 0, 2, node);
+        System.out.println();
+        return node.zigzagSayisi;
     }
-
-//    public static void changeStatus(){
-//        if (status == 1)
-//            status = 0;
-//        else
-//            status = 1;
-//    }
 
     public static int getCount(ArrayList<Tree> path) {
 
@@ -111,10 +130,10 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
             }
             parentsParent = path.get(i);
 
-            if ((parentsParent.r == parent && parent.l == root)){
+            if ((parentsParent.r == parent && parent.l == root)) {
                 System.out.println("sag-sol, root: " + root.x);
                 count++;
-            } else if ((parentsParent.l == parent && parent.r == root)){
+            } else if ((parentsParent.l == parent && parent.r == root)) {
                 System.out.println("sol-sag, root: " + root.x);
                 count++;
             }
@@ -136,57 +155,6 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
             status = 1;
         return status;
     }
-
-//    public static int longestPath(Tree root, Tree parent, Tree parentsParent, int count) // 1 for right and 0 for left
-//    {
-//
-//        // If root is null means there
-//        // is no binary tree so
-//        // return a empty vector
-//        if (root == null) {
-////            count--;
-//            ArrayList<Tree> output = new ArrayList<>();
-//            return count;
-//        }
-//
-////        changeStatus();
-//        // Recursive call on root.right
-//        count = longestPath(root.r, root, root.parent, count);
-//
-//        if (parentsParent.r == parent && parent.l == root)
-//            count++;
-//
-////        changeStatus();
-//        // Recursive call on root.left
-////        ArrayList<Tree> left = longestPath(root.l, root, root.parent, count);
-//        count = longestPath(root.l, root, root.parent, count);
-//
-//        if (parentsParent.l == parent && parent.r == root)
-//            count++;
-//
-//
-//        // Compare the size of the two ArrayList
-//        // and insert current node accordingly
-////        if(right.size() < left.size())
-////        {
-////            left.add(root);
-////        }
-////        else
-////        {
-////            right.add(root);
-////        }
-//
-////        Tree countTree = new Tree();
-////        countTree.x = count;
-////
-////        left.add(countTree);
-////        right.add(countTree);
-//
-//
-//        // Return the appropriate ArrayList
-////        return (left.size() > right.size() ? left :right);
-//        return count;
-//    }
 
     public static ArrayList<Tree> longestPath(Tree root) {
 
@@ -213,8 +181,7 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
         }
 
         // Return the appropriate ArrayList
-        return (left.size() >
-                right.size() ? left : right);
+        return (left.size() > right.size() ? left : right);
     }
 
     public static void main(String[] args) {
@@ -230,6 +197,7 @@ the height of tree T (number of edges on the longest path from root to leaf) is 
         root.r.r.l = newTree(30);
         root.r.r.r = newTree(8);
         root.r.r.l.r = newTree(9);
+//        root.r.r.l.r.r = newTree(11);
 
 //        ArrayList<Tree> output = longestPath(root, root, root);
 //
